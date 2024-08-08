@@ -19,7 +19,7 @@ const LoginForm: React.FC = () => {
 
   const login = (values: LoginFormProps) => {
     localStorage.setItem("username", values.username);
-    router.push("/dashboard"); // Use router.push for navigation
+    window.location.reload();
   };
 
   const startChallenge = () => {

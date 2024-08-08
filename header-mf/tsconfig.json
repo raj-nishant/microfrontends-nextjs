@@ -30,7 +30,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "build/types/**/*.ts",
-    "src/components/Header.jsx"
+    "src/components/Header.tsx"
   ],
   "exclude": ["node_modules"]
 }

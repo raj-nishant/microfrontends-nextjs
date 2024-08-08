@@ -13,7 +13,6 @@ const Auth: React.FC = () => {
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUser(storedUsername);
-      router.push("/dashboard");
     }
   }, [router]);
 

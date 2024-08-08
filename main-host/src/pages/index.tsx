@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 const Header = dynamic(() => import("header/Header"), {
   ssr: false,
 });
-const Body = dynamic(() => import("body/Body"), {
+const Body = dynamic(() => import("body/Dashboard"), {
   ssr: false,
 });
 const Login = dynamic(() => import("login/Login"), {

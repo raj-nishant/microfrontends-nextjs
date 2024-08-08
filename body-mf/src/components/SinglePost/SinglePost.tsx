@@ -63,7 +63,7 @@ const SinglePost = ({ post, onEdit, onDelete, onProgressUpdate }) => {
         </p>
         <p className="text-gray-500">
           <strong>Frequency:</strong>{" "}
-          {post.frequency.charAt(0).toUpperCase() + post.frequency.slice(1)}
+          {post?.frequency?.charAt(0).toUpperCase() + post?.frequency?.slice(1)}
         </p>
         {post.url && (
           <Button
