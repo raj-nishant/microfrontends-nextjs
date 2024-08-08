@@ -11,7 +11,10 @@ interface Post {
   title: string;
   description: string;
   url: string;
-  deadline: string;
+  startDate: string;
+  duration: string;
+  frequency: string;
+  progress: number;
 }
 
 interface UpdatePostModalProps {
@@ -40,7 +43,7 @@ const UpdatePostModal: React.FC<UpdatePostModalProps> = ({
   };
 
   const onChangeDate = (date: moment.Moment | null, dateString: string) => {
-    setUpdatedPost({ ...updatedPost, deadline: dateString });
+    setUpdatedPost({ ...updatedPost, startDate: dateString });
   };
 
   const handleSubmit = () => {
@@ -104,12 +107,39 @@ const UpdatePostModal: React.FC<UpdatePostModalProps> = ({
             <Option value="DONE">DONE</Option>
           </Select>
         </Form.Item>
-        <Form.Item label="Deadline Day">
+        <Form.Item label="Start Date">
           <DatePicker
             format="YYYY-MM-DD"
-            value={updatedPost.deadline ? moment(updatedPost.deadline) : null}
+            value={updatedPost.startDate ? moment(updatedPost.startDate) : null}
             onChange={onChangeDate}
           />
+        </Form.Item>
+        <Form.Item label="Duration">
+          <Select
+            value={updatedPost.duration}
+            onChange={(value) =>
+              setUpdatedPost({ ...updatedPost, duration: value })
+            }
+          >
+            <Option value="1">1 week</Option>
+            <Option value="2">2 weeks</Option>
+            <Option value="3">3 weeks</Option>
+            <Option value="4">4 weeks</Option>
+            <Option value="5">5 weeks</Option>
+            <Option value="6">6 weeks</Option>
+            <Option value="7">7 weeks</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="Frequency">
+          <Select
+            value={updatedPost.frequency}
+            onChange={(value) =>
+              setUpdatedPost({ ...updatedPost, frequency: value })
+            }
+          >
+            <Option value="daily">Daily</Option>
+            <Option value="weekly">Weekly</Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

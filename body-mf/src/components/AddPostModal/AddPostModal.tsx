@@ -3,20 +3,22 @@ import { Modal, Button, Form, Input, DatePicker, Select } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import moment, { Moment } from "moment";
 
+interface Post {
+  id: string;
+  status: string;
+  title: string;
+  description: string;
+  url: string;
+  startDate: string;
+  duration: string;
+  frequency: string;
+  progress: number;
+}
+
 interface AddPostModalProps {
   visible: boolean;
   onClose: () => void;
   onAddPost: (post: Post) => void;
-}
-
-interface Post {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  frequency: string;
-  url: string; // URL field
 }
 
 const AddPostModal: React.FC<AddPostModalProps> = ({
@@ -26,15 +28,17 @@ const AddPostModal: React.FC<AddPostModalProps> = ({
 }) => {
   const [newPost, setNewPost] = useState<Post>({
     id: uuidv4(),
+    status: "TO DO",
     title: "",
     description: "",
+    url: "",
     startDate: "",
-    endDate: "",
+    duration: "",
     frequency: "daily",
-    url: "", // Added URL field
+    progress: 0,
   });
 
-  const { title, description, startDate, endDate, frequency, url } = newPost;
+  const { title, description, startDate, duration, frequency, url } = newPost;
 
   const onChangeNewPostForm = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -46,8 +50,8 @@ const AddPostModal: React.FC<AddPostModalProps> = ({
     setNewPost({ ...newPost, startDate: dateString });
   };
 
-  const onChangeEndDate = (date: Moment | null, dateString: string) => {
-    setNewPost({ ...newPost, endDate: dateString });
+  const onChangeDuration = (value: string) => {
+    setNewPost({ ...newPost, duration: value });
   };
 
   const onChangeFrequency = (value: string) => {
@@ -62,12 +66,14 @@ const AddPostModal: React.FC<AddPostModalProps> = ({
   const resetAddPostData = () => {
     setNewPost({
       id: uuidv4(),
+      status: "TO DO",
       title: "",
       description: "",
+      url: "",
       startDate: "",
-      endDate: "",
+      duration: "",
       frequency: "daily",
-      url: "", // Reset URL field
+      progress: 0,
     });
     onClose();
   };
@@ -109,16 +115,20 @@ const AddPostModal: React.FC<AddPostModalProps> = ({
         <Form.Item label="Start Date">
           <DatePicker
             format="YYYY-MM-DD"
-            value={startDate ? moment(startDate) : null}
+            value={startDate ? moment(startDate, "YYYY-MM-DD") : null}
             onChange={onChangeStartDate}
           />
         </Form.Item>
-        <Form.Item label="End Date">
-          <DatePicker
-            format="YYYY-MM-DD"
-            value={endDate ? moment(endDate) : null}
-            onChange={onChangeEndDate}
-          />
+        <Form.Item label="Duration">
+          <Select value={duration} onChange={onChangeDuration}>
+            <Select.Option value="1">1 week</Select.Option>
+            <Select.Option value="2">2 weeks</Select.Option>
+            <Select.Option value="3">3 weeks</Select.Option>
+            <Select.Option value="4">4 weeks</Select.Option>
+            <Select.Option value="5">5 weeks</Select.Option>
+            <Select.Option value="6">6 weeks</Select.Option>
+            <Select.Option value="7">7 weeks</Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item label="Frequency">
           <Select value={frequency} onChange={onChangeFrequency}>

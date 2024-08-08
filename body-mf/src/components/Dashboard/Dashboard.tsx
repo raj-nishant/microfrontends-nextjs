@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Button, notification } from "antd";
+import React, { useEffect, useState } from "react";
 import SinglePost from "../SinglePost/SinglePost";
-import UpdatePostModal from "../UpdatePostModal/UpdatePostModal";
 import AddPostModal from "../AddPostModal/AddPostModal";
+import UpdatePostModal from "../UpdatePostModal/UpdatePostModal";
+import { Button, notification } from "antd";
 import styles from "./Dashboard.module.css";
 
 interface Post {
@@ -11,12 +11,13 @@ interface Post {
   title: string;
   description: string;
   url: string;
-  deadline: string;
+  startDate: string;
+  duration: string;
+  frequency: string;
+  progress: number;
 }
 
 const Dashboard: React.FC = () => {
-  const user = "Guest";
-
   const [posts, setPosts] = useState<Post[]>([]);
   const [toDoPosts, setToDoPosts] = useState<Post[]>([]);
   const [inProgressPosts, setInProgressPosts] = useState<Post[]>([]);
@@ -25,8 +26,6 @@ const Dashboard: React.FC = () => {
   const [showUpdatePostModal, setShowUpdatePostModal] =
     useState<boolean>(false);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
-  const [deadlineNotiOpen, setDeadlineNotiOpen] = useState<boolean>(true);
-  const [earliestDeadline, setEarliestDeadline] = useState<Post | null>(null);
 
   // Fetch posts from local storage
   useEffect(() => {
@@ -38,7 +37,10 @@ const Dashboard: React.FC = () => {
         title: post.title,
         description: post.description,
         url: post.url,
-        deadline: post.endDate || post.deadline,
+        startDate: post.startDate || post.deadline,
+        duration: post.duration,
+        frequency: post.frequency,
+        progress: post.progress || 0,
       }));
       setPosts(transformedPosts);
     }
@@ -46,34 +48,10 @@ const Dashboard: React.FC = () => {
 
   // Filter posts by status
   useEffect(() => {
-    if (posts.length > 0) {
-      setToDoPosts(posts.filter((post) => post.status === "TO DO"));
-      setInProgressPosts(posts.filter((post) => post.status === "IN PROGRESS"));
-      setDonePosts(posts.filter((post) => post.status === "DONE"));
-    }
+    setToDoPosts(posts.filter((post) => post.status === "TO DO"));
+    setInProgressPosts(posts.filter((post) => post.status === "IN PROGRESS"));
+    setDonePosts(posts.filter((post) => post.status === "DONE"));
   }, [posts]);
-
-  // Calculate the earliest deadline
-  const getEarliestDeadline = useCallback(() => {
-    if (posts.length === 0) {
-      setEarliestDeadline(null);
-      return;
-    }
-    let earliestDeadlineTask = posts[0];
-    let earliestDeadline = new Date(posts[0].deadline);
-    for (let i = 1; i < posts.length; i++) {
-      const deadline = new Date(posts[i].deadline);
-      if (deadline < earliestDeadline) {
-        earliestDeadline = deadline;
-        earliestDeadlineTask = posts[i];
-      }
-    }
-    setEarliestDeadline(earliestDeadlineTask);
-  }, [posts]);
-
-  useEffect(() => {
-    getEarliestDeadline();
-  }, [getEarliestDeadline]);
 
   // Handle adding a new post
   const handleAddPost = (newPost: Post) => {
@@ -116,72 +94,62 @@ const Dashboard: React.FC = () => {
     setShowUpdatePostModal(true);
   };
 
+  // Handle progress update
+  const handleProgressUpdate = (
+    postId: string,
+    newProgress: number,
+    newStatus: string
+  ) => {
+    const updatedPosts = posts.map((post) =>
+      post.id === postId
+        ? { ...post, progress: newProgress, status: newStatus }
+        : post
+    );
+    setPosts(updatedPosts);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
+  };
+
   return (
-    <div className={styles.dashboardContainer}>
-      {posts.length > 0 && earliestDeadline && (
-        <div
-          className={`${styles.notificationCard} ${
-            deadlineNotiOpen ? "" : styles.hidden
-          }`}
-        >
-          <h1 className={styles.notificationTitle}>Hi {user}</h1>
-          <div className="mb-4">
-            <h2 className={styles.notificationSubTitle}>
-              Deadline Notification
-            </h2>
-            <p className={styles.notificationText}>
-              The deadline for task{" "}
-              <span className={styles.notificationTextBold}>
-                {earliestDeadline.title}
-              </span>{" "}
-              is{" "}
-              <span className={styles.notificationTextBold}>
-                {earliestDeadline.deadline}
-              </span>
-              , which is the earliest deadline.
-            </p>
-          </div>
-          <Button type="primary" onClick={() => setDeadlineNotiOpen(false)}>
-            Close
-          </Button>
-        </div>
-      )}
-      <div className={styles.gridContainer}>
-        <div className={styles.column}>
-          <h3 className={styles.columnTitle}>TO DO</h3>
-          <div className={styles.columnContent}>
+    <div className={styles.container}>
+      <div className={styles.grid}>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Active</h3>
+          <div className={styles.spaceY}>
             {toDoPosts.map((post) => (
               <SinglePost
                 key={post.id}
                 post={post}
                 onEdit={() => handleEditPost(post)}
                 onDelete={() => handleDeletePost(post.id)}
+                onProgressUpdate={handleProgressUpdate}
               />
             ))}
           </div>
         </div>
-        <div className={styles.column}>
-          <h3 className={styles.columnTitle}>IN PROGRESS</h3>
-          <div className={styles.columnContent}>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Missed</h3>
+          <div className={styles.spaceY}>
             {inProgressPosts.map((post) => (
               <SinglePost
                 key={post.id}
                 post={post}
                 onEdit={() => handleEditPost(post)}
                 onDelete={() => handleDeletePost(post.id)}
+                onProgressUpdate={handleProgressUpdate}
               />
             ))}
           </div>
         </div>
-        <div className={styles.column}>
-          <h3 className={styles.columnTitle}>DONE</h3>
-          <div className={styles.columnContent}>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Completed</h3>
+          <div className={styles.spaceY}>
             {donePosts.map((post) => (
               <SinglePost
                 key={post.id}
                 post={post}
                 onEdit={() => handleEditPost(post)}
                 onDelete={() => handleDeletePost(post.id)}
+                onProgressUpdate={handleProgressUpdate}
               />
             ))}
           </div>
@@ -192,7 +160,7 @@ const Dashboard: React.FC = () => {
         className={styles.addButton}
         onClick={() => setShowAddPostModal(true)}
       >
-        Add Post
+        Add Challenge
       </Button>
       <AddPostModal
         visible={showAddPostModal}

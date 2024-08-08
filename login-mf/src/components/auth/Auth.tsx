@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router"; // Import useRouter
+import { useRouter } from "next/router";
 import LoginForm from "./LoginForm";
 import LoginCard from "./LoginCard";
-import start from "../../../assets/kid.png"; // Ensure this path is correct
-import styles from "./Login.module.css";
+import start from "../../../assets/kid.png";
+import styles from "./Auth.module.css";
 
-const Login: React.FC = () => {
+const Auth: React.FC = () => {
   const [user, setUser] = useState("");
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUser(storedUsername);
-      router.push("/dashboard"); // Navigate to dashboard if user exists
+      router.push("/dashboard");
     }
   }, [router]);
 
-  if (user) return null; // Prevent rendering the component if user exists
+  if (user) return null;
 
   return (
     <div className={styles.container}>
@@ -64,4 +64,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Auth;

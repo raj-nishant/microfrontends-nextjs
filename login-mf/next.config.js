@@ -9,11 +9,11 @@ module.exports = {
       //config.cache=false
       config.plugins.push(
         new NextFederationPlugin({
-          name: "body",
+          name: "login",
 
           filename: "static/chunks/remoteEntry.js",
           exposes: {
-            "./login": "./src/components/auth/Login.tsx",
+            "./Login": "./src/components/Login.tsx",
           },
           shared: {},
         })
