@@ -21,7 +21,11 @@ const Auth: React.FC = () => {
   return (
     <div className={styles.container}>
       <section className={styles.headerSection}>
-        <img src={start.src} className={styles.image} alt="Start" />
+        <img
+          src="https://res.cloudinary.com/doyjglvl6/image/upload/v1723170673/xmwe3qvioiwgjoeplzvm.png"
+          className={styles.image}
+          alt="Start"
+        />
         <div className={styles.textContainer}>
           <h3 className={styles.title}>Health Tracking</h3>
           <p className={styles.subtitle}>Your Fitness Journey Starts Here</p>

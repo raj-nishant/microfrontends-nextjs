@@ -5,7 +5,6 @@ const NavbarMenu: React.FC = () => {
   const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
-    // Ensure that `localStorage` is accessed only on the client side
     if (typeof window !== "undefined") {
       const username = localStorage.getItem("username");
       setUser(username);
